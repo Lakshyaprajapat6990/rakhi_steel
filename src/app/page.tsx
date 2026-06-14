@@ -326,8 +326,23 @@ function HeroSection() {
   
   return (
     <section id="home" className="relative min-h-screen flex items-center justify-center overflow-hidden">
-      {/* Background Slideshow */}
-      <div className="absolute inset-0">
+      {/* Main Hero Background Image */}
+      <motion.div
+        initial={{ scale: 1.1 }}
+        animate={{ scale: 1 }}
+        transition={{ duration: 1.5, ease: 'easeOut' }}
+        className="absolute inset-0"
+      >
+        <img
+          src="/images/hero-bg.png"
+          alt="LN Steel Furniture - Premium Steel Almirahs"
+          className="w-full h-full object-cover"
+        />
+        <div className="absolute inset-0 bg-gradient-to-br from-gray-900/85 via-gray-900/70 to-gray-900/85" />
+      </motion.div>
+      
+      {/* Secondary Background Slideshow (subtle) */}
+      <div className="absolute inset-0 opacity-0">
         {productImages.slice(0, 5).map((img, index) => (
           <motion.div
             key={img}
