@@ -377,27 +377,28 @@ function HeroSection() {
       />
       
       {/* Content */}
-      <div className="relative z-10 container mx-auto px-4 text-center">
+      <div className="relative z-10 container mx-auto px-4 text-left">
         <motion.div
           initial={{ opacity: 0, y: 50 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8 }}
+          className="max-w-xl"
         >
           <motion.div
             initial={{ opacity: 0, scale: 0.5 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ delay: 0.2 }}
-            className="inline-flex items-center gap-2 bg-amber-500/20 backdrop-blur-sm px-6 py-2 rounded-full mb-6"
+            className="inline-flex items-center gap-2 bg-amber-500/20 backdrop-blur-sm px-4 py-1.5 rounded-full mb-4"
           >
-            <Award className="text-amber-400" size={20} />
-            <span className="text-amber-100 font-medium">10+ Years of Excellence</span>
+            <Award className="text-amber-400" size={16} />
+            <span className="text-amber-100 font-medium text-sm">10+ Years of Excellence</span>
           </motion.div>
           
           <motion.h1
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.3 }}
-            className="text-4xl md:text-6xl lg:text-7xl font-bold text-white mb-6 leading-tight"
+            className="text-2xl md:text-4xl lg:text-5xl font-bold text-white mb-4 leading-tight"
           >
             Premium <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-400 to-orange-400">Steel Furniture</span>
             <br />Manufacturing Excellence
@@ -407,7 +408,7 @@ function HeroSection() {
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.4 }}
-            className="text-lg md:text-xl text-gray-300 mb-8 max-w-2xl mx-auto"
+            className="text-base md:text-lg text-gray-300 mb-6"
           >
             Transform your spaces with our high-quality steel almirahs, wardrobes, and custom furniture solutions. Trusted by 5000+ satisfied customers across Madhya Pradesh.
           </motion.p>
@@ -416,17 +417,17 @@ function HeroSection() {
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.5 }}
-            className="flex flex-col sm:flex-row gap-4 justify-center"
+            className="flex flex-col sm:flex-row gap-3 justify-start"
           >
             <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-              <Button size="lg" className="bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white px-8 py-6 text-lg shadow-2xl shadow-amber-500/30">
+              <Button size="lg" className="bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white px-6 py-5 text-base shadow-2xl shadow-amber-500/30">
                 Explore Products
-                <ArrowRight className="ml-2" size={20} />
+                <ArrowRight className="ml-2" size={18} />
               </Button>
             </motion.div>
             <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-              <Button size="lg" variant="outline" className="bg-white/10 backdrop-blur-sm border-white/30 text-white px-8 py-6 text-lg hover:bg-white/20">
-                <Play className="mr-2" size={20} />
+              <Button size="lg" variant="outline" className="bg-white/10 backdrop-blur-sm border-white/30 text-white px-6 py-5 text-base hover:bg-white/20">
+                <Play className="mr-2" size={18} />
                 Watch Video
               </Button>
             </motion.div>
@@ -438,7 +439,7 @@ function HeroSection() {
           initial={{ opacity: 0, y: 50 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.7 }}
-          className="mt-16 grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-8 max-w-4xl mx-auto"
+          className="mt-10 grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-6 max-w-3xl"
         >
           {[
             { value: 10000, suffix: '+', label: 'Products Delivered' },
@@ -451,12 +452,12 @@ function HeroSection() {
               initial={{ opacity: 0, scale: 0.5 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ delay: 0.8 + index * 0.1 }}
-              className="bg-white/10 backdrop-blur-sm rounded-2xl p-4 md:p-6"
+              className="bg-white/10 backdrop-blur-sm rounded-xl p-3 md:p-4"
             >
-              <div className="text-3xl md:text-4xl font-bold text-amber-400">
+              <div className="text-xl md:text-2xl font-bold text-amber-400">
                 <AnimatedCounter value={stat.value} suffix={stat.suffix} />
               </div>
-              <div className="text-gray-300 text-sm md:text-base mt-1">{stat.label}</div>
+              <div className="text-gray-300 text-xs md:text-sm mt-1">{stat.label}</div>
             </motion.div>
           ))}
         </motion.div>
