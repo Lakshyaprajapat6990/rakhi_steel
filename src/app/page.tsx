@@ -231,7 +231,7 @@ function Header() {
             whileTap={{ scale: 0.98 }}
           >
             <div className={`font-bold text-2xl md:text-3xl ${isScrolled ? 'text-gray-900' : 'text-white'}`}>
-              <span className="text-amber-500">राजदेव</span> Steel Furniture
+              <span className="text-amber-500">राखी</span> Steel Furniture
             </div>
           </motion.a>
           
@@ -335,7 +335,7 @@ function HeroSection() {
       >
         <img
           src="/images/hero-bg.png"
-          alt="राजदेव Steel Furniture - Premium Steel Almirahs"
+          alt="राखी Steel Furniture - Premium Steel Almirahs"
           className="w-full h-full object-cover"
         />
         <div className="absolute inset-0 bg-gradient-to-br from-gray-900/85 via-gray-900/70 to-gray-900/85" />
@@ -496,7 +496,7 @@ function AboutSection() {
               >
                 <img
                   src={productImages[2]}
-                  alt="राजदेव Steel Furniture Factory"
+                  alt="राखी Steel Furniture Factory"
                   className="w-full h-[400px] md:h-[500px] object-cover"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-gray-900/50 to-transparent" />
@@ -540,7 +540,7 @@ function AboutSection() {
               </h2>
               
               <p className="text-gray-600 text-lg mb-6">
-                राजदेव Steel Furniture has been a trusted name in premium steel furniture manufacturing for over a decade. We specialize in creating durable, elegant, and functional steel almirahs, wardrobes, and custom furniture solutions for homes, offices, and institutions.
+                राखी Steel Furniture has been a trusted name in premium steel furniture manufacturing for over a decade. We specialize in creating durable, elegant, and functional steel almirahs, wardrobes, and custom furniture solutions for homes, offices, and institutions.
               </p>
               
               <p className="text-gray-600 mb-8">
@@ -646,7 +646,7 @@ function WhyChooseUsSection() {
           </motion.div>
           
           <h2 className="text-3xl md:text-5xl font-bold text-white mb-6">
-            Why Customers Trust <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-400 to-orange-400">राजदेव Steel Furniture</span>
+            Why Customers Trust <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-400 to-orange-400">राखी Steel Furniture</span>
           </h2>
           
           <p className="text-gray-400 text-lg max-w-2xl mx-auto">
@@ -1075,7 +1075,7 @@ function TestimonialsSection() {
       name: 'Priya Sharma',
       role: 'Interior Designer',
       location: 'Bhopal',
-      message: 'I have been recommending राजदेव Steel Furniture to all my clients. Their custom manufacturing service is exceptional.',
+      message: 'I have been recommending राखी Steel Furniture to all my clients. Their custom manufacturing service is exceptional.',
       rating: 5
     },
     {
@@ -1791,7 +1791,7 @@ function Footer() {
           <AnimatedSection variant="fadeInUp">
             <div className="mb-6">
               <h3 className="text-2xl font-bold text-white mb-4">
-                <span className="text-amber-500">राजदेव</span> Steel Furniture
+                <span className="text-amber-500">राखी</span> Steel Furniture
               </h3>
               <p className="text-gray-400 mb-4">
                 Premium steel furniture manufacturer with 10+ years of experience. Trusted by 5000+ customers across Madhya Pradesh.
@@ -1869,7 +1869,7 @@ function Footer() {
         <div className="border-t border-gray-800 pt-8">
           <div className="flex flex-col md:flex-row items-center justify-between gap-4">
             <p className="text-gray-500 text-sm">
-              © 2024 राजदेव Steel Furniture. All rights reserved.
+              © 2024 राखी Steel Furniture. All rights reserved.
             </p>
             <div className="flex gap-6 text-sm">
               <a href="#" className="text-gray-500 hover:text-amber-400 transition-colors">Privacy Policy</a>
