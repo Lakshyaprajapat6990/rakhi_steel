@@ -376,19 +376,48 @@ function HeroSection() {
         className="absolute bottom-1/4 right-10 w-48 h-48 bg-orange-500/20 rounded-full blur-3xl"
       />
       
-      {/* Content - Minimal */}
-      <div className="relative z-10 container mx-auto px-4">
+      {/* Content */}
+      <div className="relative z-10 container mx-auto px-4 text-left">
         <motion.div
           initial={{ opacity: 0, y: 50 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8 }}
-          className="absolute bottom-24 left-4 md:left-8"
+          className="max-w-xl"
         >
+          <motion.div
+            initial={{ opacity: 0, scale: 0.5 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ delay: 0.2 }}
+            className="inline-flex items-center gap-2 bg-amber-500/20 backdrop-blur-sm px-4 py-1.5 rounded-full mb-4"
+          >
+            <Award className="text-amber-400" size={16} />
+            <span className="text-amber-100 font-medium text-sm">10+ Years of Excellence</span>
+          </motion.div>
+          
+          <motion.h1
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.3 }}
+            className="text-2xl md:text-4xl lg:text-5xl font-bold text-white mb-4 leading-tight"
+          >
+            Premium <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-400 to-orange-400">Steel Furniture</span>
+            <br />Manufacturing Excellence
+          </motion.h1>
+          
+          <motion.p
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.4 }}
+            className="text-base md:text-lg text-gray-300 mb-6"
+          >
+            Transform your spaces with our high-quality steel almirahs, wardrobes, and custom furniture solutions. Trusted by 5000+ satisfied customers across Madhya Pradesh.
+          </motion.p>
+          
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.5 }}
-            className="flex gap-3"
+            className="flex flex-col sm:flex-row gap-3 justify-start"
           >
             <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
               <Button size="lg" className="bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white px-6 py-5 text-base shadow-2xl shadow-amber-500/30">
@@ -403,6 +432,34 @@ function HeroSection() {
               </Button>
             </motion.div>
           </motion.div>
+        </motion.div>
+        
+        {/* Stats Bar */}
+        <motion.div
+          initial={{ opacity: 0, y: 50 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.7 }}
+          className="mt-10 grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-6 max-w-3xl"
+        >
+          {[
+            { value: 10000, suffix: '+', label: 'Products Delivered' },
+            { value: 5000, suffix: '+', label: 'Happy Customers' },
+            { value: 10, suffix: '+', label: 'Years Experience' },
+            { value: 50, suffix: '+', label: 'Cities Served' }
+          ].map((stat, index) => (
+            <motion.div
+              key={stat.label}
+              initial={{ opacity: 0, scale: 0.5 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ delay: 0.8 + index * 0.1 }}
+              className="bg-white/10 backdrop-blur-sm rounded-xl p-3 md:p-4"
+            >
+              <div className="text-xl md:text-2xl font-bold text-amber-400">
+                <AnimatedCounter value={stat.value} suffix={stat.suffix} />
+              </div>
+              <div className="text-gray-300 text-xs md:text-sm mt-1">{stat.label}</div>
+            </motion.div>
+          ))}
         </motion.div>
       </div>
       
