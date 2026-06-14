@@ -338,7 +338,7 @@ function HeroSection() {
           alt="राखी Steel Furniture - Premium Steel Almirahs"
           className="w-full h-full object-cover"
         />
-        <div className="absolute inset-0 bg-gradient-to-br from-gray-900/40 via-gray-900/20 to-gray-900/40" />
+        <div className="absolute inset-0 bg-gradient-to-br from-gray-900/85 via-gray-900/70 to-gray-900/85" />
       </motion.div>
       
       {/* Secondary Background Slideshow (subtle) */}
