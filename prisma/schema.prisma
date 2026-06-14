@@ -1,0 +1,91 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Inquiry {
+  id          String   @id @default(cuid())
+  name        String
+  email       String
+  phone       String
+  message     String
+  inquiryType String   @default("general") // general, bulk, dealer, custom
+  status      String   @default("new") // new, contacted, negotiation, converted, closed
+  productName String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Product {
+  id              String   @id @default(cuid())
+  name            String
+  description     String
+  features        String   // JSON string of features
+  specifications  String   // JSON string of specs
+  imageUrls       String   // JSON string of image URLs
+  category        String
+  price           String?
+  isFeatured      Boolean  @default(false)
+  order           Int      @default(0)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+model Testimonial {
+  id          String   @id @default(cuid())
+  name        String
+  role        String?
+  company     String?
+  message     String
+  rating      Int      @default(5)
+  imageUrl    String?
+  projectType String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model BlogPost {
+  id          String   @id @default(cuid())
+  title       String
+  slug        String   @unique
+  excerpt     String
+  content     String
+  imageUrl    String?
+  category    String?
+  tags        String?  // JSON string of tags
+  isPublished Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model CatalogRequest {
+  id        String   @id @default(cuid())
+  name      String
+  phone     String
+  email     String?
+  createdAt DateTime @default(now())
+}
+
+model SiteSettings {
+  id          String   @id @default(cuid())
+  key         String   @unique
+  value       String
+  description String?
+  updatedAt   DateTime @updatedAt
+}
+
+model Location {
+  id        String   @id @default(cuid())
+  name      String
+  type      String   // city, region
+  isActive  Boolean  @default(true)
+  order     Int      @default(0)
+  createdAt DateTime @default(now())
+}
