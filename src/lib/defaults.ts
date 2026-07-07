@@ -26,17 +26,30 @@ export function resolveProductImage(url: string | undefined, order = 0): string 
   return PRODUCT_IMAGES[Math.abs(order) % PRODUCT_IMAGES.length]
 }
 
+export function removeRailingWords(text: string): string {
+  return text
+    .replace(/Railing and /gi, '')
+    .replace(/ railings/gi, '')
+    .replace(/ railing/gi, '')
+    .replace(/railings/gi, '')
+    .replace(/railing/gi, '')
+    .replace(/\s{2,}/g, ' ')
+    .replace(/ ,/g, ',')
+    .replace(/,\s*,/g, ',')
+    .trim()
+}
+
 export const DEFAULT_SETTINGS: Record<string, string> = {
   phone1: '+91 98765 43210',
   phone2: '+91 98765 43211',
   email: 'info@rakhisteelfurniture.com',
   address: 'Industrial Area, Sector 25, Indore, Madhya Pradesh - 452001',
   whatsapp: '919876543210',
-  hero_title: 'राखी Steel Railing and Fabrications',
+  hero_title: 'राखी Steel and Fabrications',
   hero_subtitle:
-    'Premium stainless steel railings, glass railings, balcony & staircase solutions. Expert fabrication with precision installation across Madhya Pradesh.',
+    'Premium stainless steel, glass, balcony & staircase solutions. Expert fabrication with precision installation across Madhya Pradesh.',
   about_text:
-    'राखी Steel Railing and Fabrications is a trusted name in premium steel railing manufacturing and custom fabrication. We specialize in stainless steel railings, glass railings, balcony railings, staircase railings, and bespoke steel fabrication for homes, apartments, offices, and commercial projects.',
+    'राखी Steel and Fabrications is a trusted name in premium steel manufacturing and custom fabrication. We specialize in stainless steel, glass, balcony, staircase, and bespoke steel fabrication for homes, apartments, offices, and commercial projects.',
   company_name: 'राखी Steel Furniture',
 }
 

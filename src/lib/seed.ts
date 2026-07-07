@@ -4,6 +4,7 @@ import {
   DEFAULT_SETTINGS,
   DEFAULT_TESTIMONIALS,
   isBrokenProductImageUrl,
+  removeRailingWords,
   resolveProductImage,
 } from '@/lib/defaults'
 
@@ -35,12 +36,34 @@ async function syncBrandingSettings() {
   const settings = await db.siteSettings.findMany()
 
   for (const setting of settings) {
-    if (!setting.value.includes('Aditya Steel')) continue
+    let value = setting.value
 
-    await db.siteSettings.update({
-      where: { key: setting.key },
-      data: { value: setting.value.replaceAll('Aditya Steel', 'राखी Steel') },
-    })
+    if (value.includes('Aditya Steel')) {
+      value = value.replaceAll('Aditya Steel', 'राखी Steel')
+    }
+
+    if (/railing/i.test(value)) {
+      value = removeRailingWords(value)
+    }
+
+    if (value !== setting.value) {
+      await db.siteSettings.update({
+        where: { key: setting.key },
+        data: { value },
+      })
+    }
+  }
+
+  for (const [key, value] of Object.entries(DEFAULT_SETTINGS)) {
+    if (!['hero_title', 'hero_subtitle', 'about_text', 'company_name'].includes(key)) continue
+
+    const existing = await db.siteSettings.findUnique({ where: { key } })
+    if (existing && /railing/i.test(existing.value)) {
+      await db.siteSettings.update({
+        where: { key },
+        data: { value },
+      })
+    }
   }
 
   await db.siteSettings.upsert({
