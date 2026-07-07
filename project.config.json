@@ -1,0 +1,9 @@
+{
+  "name": "Rakhi Steel Furniture — LIVE",
+  "vercelProject": "rakhi-steel-landing",
+  "vercelScope": "lakshyas-projects-ccb3a0a8",
+  "vercelProjectId": "prj_Er3GJnGMzW6IRD62SvfbRcvQYgkA",
+  "liveUrl": "https://rakhi-steel-landing.vercel.app",
+  "role": "production",
+  "warning": "Only deploy from THIS folder for the live website. Do not use workspace (2) for live deploys."
+}

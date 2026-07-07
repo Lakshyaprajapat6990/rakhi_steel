@@ -1,8 +1,11 @@
 import { NextResponse } from 'next/server'
 import { db } from '@/lib/db'
+import { ensureSeedData } from '@/lib/seed'
 
 export async function GET() {
   try {
+    await ensureSeedData()
+
     const testimonials = await db.testimonial.findMany({
       orderBy: {
         createdAt: 'desc'

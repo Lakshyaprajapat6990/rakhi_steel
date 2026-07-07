@@ -3,11 +3,10 @@
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { motion } from 'framer-motion'
-import { 
-  LayoutDashboard, Users, Package, MessageSquare, FileText, Settings, 
-  LogOut, Bell, Search, ChevronDown, Eye, Trash2, CheckCircle, 
-  Clock, AlertCircle, TrendingUp, DollarSign, ShoppingBag, Mail,
-  Factory, Menu, X
+import {
+  LayoutDashboard, Package, MessageSquare, Settings,
+  LogOut, Bell, Search, Eye, Trash2, CheckCircle,
+  Clock, Factory, Menu, X, Mail, ExternalLink, Quote
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -20,6 +19,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
+import { ProductsTab } from '@/components/admin/products-tab'
+import { TestimonialsTab } from '@/components/admin/testimonials-tab'
+import { SettingsTab } from '@/components/admin/settings-tab'
 
 interface Inquiry {
   id: string
@@ -33,10 +35,21 @@ interface Inquiry {
   createdAt: string
 }
 
+type Tab = 'dashboard' | 'inquiries' | 'products' | 'testimonials' | 'settings'
+
+const navItems: { id: Tab; icon: typeof LayoutDashboard; label: string }[] = [
+  { id: 'dashboard', icon: LayoutDashboard, label: 'Dashboard' },
+  { id: 'inquiries', icon: MessageSquare, label: 'Inquiries' },
+  { id: 'products', icon: Package, label: 'Products' },
+  { id: 'testimonials', icon: Quote, label: 'Testimonials' },
+  { id: 'settings', icon: Settings, label: 'Settings' },
+]
+
 export default function AdminDashboard() {
   const [inquiries, setInquiries] = useState<Inquiry[]>([])
   const [loading, setLoading] = useState(true)
   const [sidebarOpen, setSidebarOpen] = useState(false)
+  const [activeTab, setActiveTab] = useState<Tab>('dashboard')
   const router = useRouter()
 
   useEffect(() => {
@@ -62,7 +75,7 @@ export default function AdminDashboard() {
       await fetch(`/api/inquiry/${id}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ status })
+        body: JSON.stringify({ status }),
       })
       fetchInquiries()
     } catch (error) {
@@ -91,21 +104,120 @@ export default function AdminDashboard() {
       contacted: 'bg-yellow-500/10 text-yellow-400 border-yellow-500/20',
       negotiation: 'bg-purple-500/10 text-purple-400 border-purple-500/20',
       converted: 'bg-green-500/10 text-green-400 border-green-500/20',
-      closed: 'bg-gray-500/10 text-gray-400 border-gray-500/20'
+      closed: 'bg-gray-500/10 text-gray-400 border-gray-500/20',
     }
     return styles[status] || styles.new
   }
 
   const stats = [
     { title: 'Total Inquiries', value: inquiries.length, icon: MessageSquare, color: 'from-blue-500 to-cyan-500' },
-    { title: 'New', value: inquiries.filter(i => i.status === 'new').length, icon: Bell, color: 'from-amber-500 to-orange-500' },
-    { title: 'Converted', value: inquiries.filter(i => i.status === 'converted').length, icon: CheckCircle, color: 'from-green-500 to-emerald-500' },
-    { title: 'Pending', value: inquiries.filter(i => i.status === 'contacted' || i.status === 'negotiation').length, icon: Clock, color: 'from-purple-500 to-pink-500' }
+    { title: 'New', value: inquiries.filter((i) => i.status === 'new').length, icon: Bell, color: 'from-amber-500 to-orange-500' },
+    { title: 'Converted', value: inquiries.filter((i) => i.status === 'converted').length, icon: CheckCircle, color: 'from-green-500 to-emerald-500' },
+    { title: 'Pending', value: inquiries.filter((i) => i.status === 'contacted' || i.status === 'negotiation').length, icon: Clock, color: 'from-purple-500 to-pink-500' },
   ]
+
+  const renderInquiriesTable = () => (
+    <Card className="bg-gray-800 border-gray-700">
+      <CardHeader>
+        <CardTitle className="text-white">Recent Inquiries</CardTitle>
+      </CardHeader>
+      <CardContent>
+        {loading ? (
+          <div className="text-center py-8 text-gray-400">
+            <div className="w-8 h-8 border-2 border-amber-500/30 border-t-amber-500 rounded-full animate-spin mx-auto mb-4" />
+            Loading inquiries...
+          </div>
+        ) : inquiries.length === 0 ? (
+          <div className="text-center py-8 text-gray-400">
+            <MessageSquare className="mx-auto mb-4 opacity-50" size={48} />
+            No inquiries yet
+          </div>
+        ) : (
+          <div className="overflow-x-auto">
+            <table className="w-full min-w-[800px]">
+              <thead>
+                <tr className="border-b border-gray-700">
+                  <th className="text-left py-3 px-4 text-gray-400 font-medium">Name</th>
+                  <th className="text-left py-3 px-4 text-gray-400 font-medium">Contact</th>
+                  <th className="text-left py-3 px-4 text-gray-400 font-medium">Type</th>
+                  <th className="text-left py-3 px-4 text-gray-400 font-medium">Status</th>
+                  <th className="text-left py-3 px-4 text-gray-400 font-medium">Date</th>
+                  <th className="text-left py-3 px-4 text-gray-400 font-medium">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {inquiries.map((inquiry, index) => (
+                  <motion.tr
+                    key={inquiry.id}
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: index * 0.05 }}
+                    className="border-b border-gray-700/50 hover:bg-gray-700/30"
+                  >
+                    <td className="py-3 px-4">
+                      <div className="text-white font-medium">{inquiry.name}</div>
+                      <div className="text-gray-400 text-sm truncate max-w-[200px]">{inquiry.message}</div>
+                    </td>
+                    <td className="py-3 px-4">
+                      <div className="flex items-center gap-1 text-gray-300 text-sm">
+                        <Mail size={14} />
+                        {inquiry.email || 'N/A'}
+                      </div>
+                      <div className="text-gray-400 text-sm">{inquiry.phone}</div>
+                    </td>
+                    <td className="py-3 px-4">
+                      <Badge variant="outline" className="capitalize">
+                        {inquiry.inquiryType}
+                      </Badge>
+                    </td>
+                    <td className="py-3 px-4">
+                      <Select value={inquiry.status} onValueChange={(value) => updateStatus(inquiry.id, value)}>
+                        <SelectTrigger className={`w-32 ${getStatusBadge(inquiry.status)}`}>
+                          <SelectValue className="capitalize" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="new">New</SelectItem>
+                          <SelectItem value="contacted">Contacted</SelectItem>
+                          <SelectItem value="negotiation">Negotiation</SelectItem>
+                          <SelectItem value="converted">Converted</SelectItem>
+                          <SelectItem value="closed">Closed</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </td>
+                    <td className="py-3 px-4 text-gray-400 text-sm">
+                      {new Date(inquiry.createdAt).toLocaleDateString('en-IN', {
+                        day: 'numeric',
+                        month: 'short',
+                        year: 'numeric',
+                      })}
+                    </td>
+                    <td className="py-3 px-4">
+                      <div className="flex items-center gap-2">
+                        <Button variant="ghost" size="sm" className="text-gray-400 hover:text-white">
+                          <Eye size={16} />
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className="text-gray-400 hover:text-red-400"
+                          onClick={() => deleteInquiry(inquiry.id)}
+                        >
+                          <Trash2 size={16} />
+                        </Button>
+                      </div>
+                    </td>
+                  </motion.tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </CardContent>
+    </Card>
+  )
 
   return (
     <div className="min-h-screen bg-gray-900 flex">
-      {/* Sidebar */}
       <motion.aside
         initial={{ x: -100 }}
         animate={{ x: 0 }}
@@ -127,19 +239,16 @@ export default function AdminDashboard() {
         </div>
 
         <nav className="p-4 space-y-2">
-          {[
-            { icon: LayoutDashboard, label: 'Dashboard', active: true },
-            { icon: MessageSquare, label: 'Inquiries', active: false },
-            { icon: Users, label: 'Customers', active: false },
-            { icon: Package, label: 'Products', active: false },
-            { icon: FileText, label: 'Blog', active: false },
-            { icon: Settings, label: 'Settings', active: false }
-          ].map((item) => (
+          {navItems.map((item) => (
             <button
-              key={item.label}
+              key={item.id}
+              onClick={() => {
+                setActiveTab(item.id)
+                setSidebarOpen(false)
+              }}
               className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all ${
-                item.active 
-                  ? 'bg-amber-500/20 text-amber-400' 
+                activeTab === item.id
+                  ? 'bg-amber-500/20 text-amber-400'
                   : 'text-gray-400 hover:bg-gray-700 hover:text-white'
               }`}
             >
@@ -149,7 +258,13 @@ export default function AdminDashboard() {
           ))}
         </nav>
 
-        <div className="absolute bottom-0 left-0 right-0 p-4 border-t border-gray-700">
+        <div className="absolute bottom-0 left-0 right-0 p-4 border-t border-gray-700 space-y-2">
+          <a href="/" target="_blank" rel="noopener noreferrer">
+            <Button className="w-full bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white">
+              <ExternalLink size={18} className="mr-2" />
+              Go to Website
+            </Button>
+          </a>
           <button
             onClick={handleLogout}
             className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-gray-400 hover:bg-red-500/20 hover:text-red-400 transition-all"
@@ -160,9 +275,7 @@ export default function AdminDashboard() {
         </div>
       </motion.aside>
 
-      {/* Main Content */}
       <div className="flex-1 flex flex-col">
-        {/* Header */}
         <header className="bg-gray-800 border-b border-gray-700 px-4 py-3">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
@@ -175,10 +288,16 @@ export default function AdminDashboard() {
               </div>
             </div>
             <div className="flex items-center gap-4">
+              <a href="/" target="_blank" rel="noopener noreferrer" className="hidden sm:block">
+                <Button variant="outline" className="border-amber-500/50 text-amber-400 hover:bg-amber-500/10">
+                  <ExternalLink size={16} className="mr-2" />
+                  Go to Website
+                </Button>
+              </a>
               <button className="relative text-gray-400 hover:text-white">
                 <Bell size={24} />
                 <span className="absolute -top-1 -right-1 w-5 h-5 bg-red-500 rounded-full text-xs flex items-center justify-center text-white">
-                  {inquiries.filter(i => i.status === 'new').length}
+                  {inquiries.filter((i) => i.status === 'new').length}
                 </span>
               </button>
               <div className="flex items-center gap-2">
@@ -191,172 +310,64 @@ export default function AdminDashboard() {
           </div>
         </header>
 
-        {/* Dashboard Content */}
         <main className="flex-1 p-4 md:p-6 overflow-auto">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="mb-6"
-          >
-            <h1 className="text-2xl md:text-3xl font-bold text-white">Dashboard</h1>
-            <p className="text-gray-400">Welcome back! Here&apos;s your business overview.</p>
-          </motion.div>
+          {(activeTab === 'dashboard' || activeTab === 'inquiries') && (
+            <>
+              {activeTab === 'dashboard' && (
+                <>
+                  <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="mb-6">
+                    <h1 className="text-2xl md:text-3xl font-bold text-white">Dashboard</h1>
+                    <p className="text-gray-400">Welcome back! Here&apos;s your business overview.</p>
+                  </motion.div>
 
-          {/* Stats Grid */}
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-            {stats.map((stat, index) => (
-              <motion.div
-                key={stat.title}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: index * 0.1 }}
-              >
-                <Card className="bg-gray-800 border-gray-700">
-                  <CardContent className="p-4">
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <p className="text-gray-400 text-sm">{stat.title}</p>
-                        <p className="text-2xl font-bold text-white">{stat.value}</p>
-                      </div>
-                      <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${stat.color} flex items-center justify-center`}>
-                        <stat.icon className="text-white" size={24} />
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
+                  <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+                    {stats.map((stat, index) => (
+                      <motion.div
+                        key={stat.title}
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: index * 0.1 }}
+                      >
+                        <Card className="bg-gray-800 border-gray-700">
+                          <CardContent className="p-4">
+                            <div className="flex items-center justify-between">
+                              <div>
+                                <p className="text-gray-400 text-sm">{stat.title}</p>
+                                <p className="text-2xl font-bold text-white">{stat.value}</p>
+                              </div>
+                              <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${stat.color} flex items-center justify-center`}>
+                                <stat.icon className="text-white" size={24} />
+                              </div>
+                            </div>
+                          </CardContent>
+                        </Card>
+                      </motion.div>
+                    ))}
+                  </div>
+                </>
+              )}
+
+              {activeTab === 'inquiries' && (
+                <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="mb-6">
+                  <h1 className="text-2xl md:text-3xl font-bold text-white">Inquiries</h1>
+                  <p className="text-gray-400">Manage customer inquiries from the website contact form.</p>
+                </motion.div>
+              )}
+
+              <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}>
+                {renderInquiriesTable()}
               </motion.div>
-            ))}
-          </div>
+            </>
+          )}
 
-          {/* Inquiries Table */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.4 }}
-          >
-            <Card className="bg-gray-800 border-gray-700">
-              <CardHeader className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                <CardTitle className="text-white">Recent Inquiries</CardTitle>
-                <div className="flex items-center gap-2">
-                  <Select defaultValue="all">
-                    <SelectTrigger className="bg-gray-700 border-gray-600 text-white w-32">
-                      <SelectValue placeholder="Filter" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="all">All</SelectItem>
-                      <SelectItem value="new">New</SelectItem>
-                      <SelectItem value="contacted">Contacted</SelectItem>
-                      <SelectItem value="converted">Converted</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-              </CardHeader>
-              <CardContent>
-                {loading ? (
-                  <div className="text-center py-8 text-gray-400">
-                    <div className="w-8 h-8 border-2 border-amber-500/30 border-t-amber-500 rounded-full animate-spin mx-auto mb-4" />
-                    Loading inquiries...
-                  </div>
-                ) : inquiries.length === 0 ? (
-                  <div className="text-center py-8 text-gray-400">
-                    <MessageSquare className="mx-auto mb-4 opacity-50" size={48} />
-                    No inquiries yet
-                  </div>
-                ) : (
-                  <div className="overflow-x-auto">
-                    <table className="w-full min-w-[800px]">
-                      <thead>
-                        <tr className="border-b border-gray-700">
-                          <th className="text-left py-3 px-4 text-gray-400 font-medium">Name</th>
-                          <th className="text-left py-3 px-4 text-gray-400 font-medium">Contact</th>
-                          <th className="text-left py-3 px-4 text-gray-400 font-medium">Type</th>
-                          <th className="text-left py-3 px-4 text-gray-400 font-medium">Status</th>
-                          <th className="text-left py-3 px-4 text-gray-400 font-medium">Date</th>
-                          <th className="text-left py-3 px-4 text-gray-400 font-medium">Actions</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {inquiries.map((inquiry, index) => (
-                          <motion.tr
-                            key={inquiry.id}
-                            initial={{ opacity: 0, x: -20 }}
-                            animate={{ opacity: 1, x: 0 }}
-                            transition={{ delay: index * 0.05 }}
-                            className="border-b border-gray-700/50 hover:bg-gray-700/30"
-                          >
-                            <td className="py-3 px-4">
-                              <div className="text-white font-medium">{inquiry.name}</div>
-                              <div className="text-gray-400 text-sm truncate max-w-[200px]">{inquiry.message}</div>
-                            </td>
-                            <td className="py-3 px-4">
-                              <div className="flex items-center gap-1 text-gray-300 text-sm">
-                                <Mail size={14} />
-                                {inquiry.email || 'N/A'}
-                              </div>
-                              <div className="text-gray-400 text-sm">{inquiry.phone}</div>
-                            </td>
-                            <td className="py-3 px-4">
-                              <Badge variant="outline" className="capitalize">
-                                {inquiry.inquiryType}
-                              </Badge>
-                            </td>
-                            <td className="py-3 px-4">
-                              <Select
-                                value={inquiry.status}
-                                onValueChange={(value) => updateStatus(inquiry.id, value)}
-                              >
-                                <SelectTrigger className={`w-32 ${getStatusBadge(inquiry.status)}`}>
-                                  <SelectValue className="capitalize" />
-                                </SelectTrigger>
-                                <SelectContent>
-                                  <SelectItem value="new">New</SelectItem>
-                                  <SelectItem value="contacted">Contacted</SelectItem>
-                                  <SelectItem value="negotiation">Negotiation</SelectItem>
-                                  <SelectItem value="converted">Converted</SelectItem>
-                                  <SelectItem value="closed">Closed</SelectItem>
-                                </SelectContent>
-                              </Select>
-                            </td>
-                            <td className="py-3 px-4 text-gray-400 text-sm">
-                              {new Date(inquiry.createdAt).toLocaleDateString('en-IN', {
-                                day: 'numeric',
-                                month: 'short',
-                                year: 'numeric'
-                              })}
-                            </td>
-                            <td className="py-3 px-4">
-                              <div className="flex items-center gap-2">
-                                <Button variant="ghost" size="sm" className="text-gray-400 hover:text-white">
-                                  <Eye size={16} />
-                                </Button>
-                                <Button 
-                                  variant="ghost" 
-                                  size="sm" 
-                                  className="text-gray-400 hover:text-red-400"
-                                  onClick={() => deleteInquiry(inquiry.id)}
-                                >
-                                  <Trash2 size={16} />
-                                </Button>
-                              </div>
-                            </td>
-                          </motion.tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
-                )}
-              </CardContent>
-            </Card>
-          </motion.div>
+          {activeTab === 'products' && <ProductsTab />}
+          {activeTab === 'testimonials' && <TestimonialsTab />}
+          {activeTab === 'settings' && <SettingsTab />}
         </main>
       </div>
 
-      {/* Mobile Sidebar Overlay */}
       {sidebarOpen && (
-        <div 
-          className="fixed inset-0 bg-black/50 z-40 lg:hidden"
-          onClick={() => setSidebarOpen(false)}
-        />
+        <div className="fixed inset-0 bg-black/50 z-40 lg:hidden" onClick={() => setSidebarOpen(false)} />
       )}
     </div>
   )

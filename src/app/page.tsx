@@ -43,6 +43,9 @@ import {
   slideInFromLeft, slideInFromRight, slideInFromBottom,
   viewportSettings, viewportSettingsOnce
 } from '@/lib/animations'
+import { useSiteContent, parseImageUrls, type SiteProduct, type SiteTestimonial, type SiteSettings } from '@/hooks/use-site-content'
+import { PRODUCT_IMAGES, resolveProductImage } from '@/lib/defaults'
+import { DEFAULT_SETTINGS } from '@/lib/defaults'
 
 // Animated counter component
 function AnimatedCounter({ value, suffix = '', duration = 2 }: { value: number, suffix?: string, duration?: number }) {
@@ -140,39 +143,7 @@ function StaggerItem({ children, className = '', variant = 'fadeInUp' }: { child
   )
 }
 
-// Product images from the uploaded files
-const productImages = [
-  '/images/products/WhatsApp Image 2026-06-14 at 7.21.10 PM.jpeg',
-  '/images/products/WhatsApp Image 2026-06-14 at 7.21.11 PM.jpeg',
-  '/images/products/WhatsApp Image 2026-06-14 at 7.21.12 PM (1).jpeg',
-  '/images/products/WhatsApp Image 2026-06-14 at 7.21.12 PM.jpeg',
-  '/images/products/WhatsApp Image 2026-06-14 at 7.21.16 PM (1).jpeg',
-  '/images/products/WhatsApp Image 2026-06-14 at 7.21.16 PM (2).jpeg',
-  '/images/products/WhatsApp Image 2026-06-14 at 7.21.16 PM (3).jpeg',
-  '/images/products/WhatsApp Image 2026-06-14 at 7.21.16 PM.jpeg',
-  '/images/products/WhatsApp Image 2026-06-14 at 7.21.17 PM (1).jpeg',
-  '/images/products/WhatsApp Image 2026-06-14 at 7.21.17 PM (2).jpeg',
-  '/images/products/WhatsApp Image 2026-06-14 at 7.21.17 PM.jpeg',
-  '/images/products/WhatsApp Image 2026-06-14 at 7.21.18 PM (1).jpeg',
-  '/images/products/WhatsApp Image 2026-06-14 at 7.21.18 PM (2).jpeg',
-  '/images/products/WhatsApp Image 2026-06-14 at 7.21.18 PM.jpeg',
-  '/images/products/WhatsApp Image 2026-06-14 at 7.21.19 PM (1).jpeg',
-  '/images/products/WhatsApp Image 2026-06-14 at 7.21.19 PM (2).jpeg',
-  '/images/products/WhatsApp Image 2026-06-14 at 7.21.19 PM.jpeg',
-  '/images/products/WhatsApp Image 2026-06-14 at 7.21.20 PM (1).jpeg',
-  '/images/products/WhatsApp Image 2026-06-14 at 7.21.20 PM (2).jpeg',
-  '/images/products/WhatsApp Image 2026-06-14 at 7.21.20 PM.jpeg',
-  '/images/products/WhatsApp Image 2026-06-14 at 7.21.21 PM (1).jpeg',
-  '/images/products/WhatsApp Image 2026-06-14 at 7.21.21 PM (2).jpeg',
-  '/images/products/WhatsApp Image 2026-06-14 at 7.21.21 PM.jpeg',
-  '/images/products/WhatsApp Image 2026-06-14 at 7.21.22 PM (1).jpeg',
-  '/images/products/WhatsApp Image 2026-06-14 at 7.21.22 PM.jpeg',
-  '/images/products/WhatsApp Image 2026-06-14 at 7.21.23 PM (1).jpeg',
-  '/images/products/WhatsApp Image 2026-06-14 at 7.21.23 PM (2).jpeg',
-  '/images/products/WhatsApp Image 2026-06-14 at 7.21.23 PM.jpeg',
-  '/images/products/WhatsApp Image 2026-06-14 at 7.21.24 PM (1).jpeg',
-  '/images/products/WhatsApp Image 2026-06-14 at 7.21.24 PM.jpeg'
-]
+const productImages = [...PRODUCT_IMAGES]
 
 const videos = [
   '/videos/WhatsApp Video 2026-06-14 at 7.21.12 PM.mp4',
@@ -311,24 +282,12 @@ function Header() {
 }
 
 // Hero Section
-function HeroSection() {
-  const [currentSlide, setCurrentSlide] = useState(0)
-  const [isVideoPlaying, setIsVideoPlaying] = useState(false)
-  
-  useEffect(() => {
-    const interval = setInterval(() => {
-      if (!isVideoPlaying) {
-        setCurrentSlide((prev) => (prev + 1) % productImages.length)
-      }
-    }, 5000)
-    return () => clearInterval(interval)
-  }, [isVideoPlaying])
-  
+function HeroSection({ settings }: { settings: SiteSettings }) {
   return (
     <section id="home" className="relative min-h-screen flex items-center justify-center overflow-hidden">
-      {/* Main Hero Background Image */}
+      {/* Hero Background Image */}
       <motion.div
-        initial={{ scale: 1.1 }}
+        initial={{ scale: 1.05 }}
         animate={{ scale: 1 }}
         transition={{ duration: 1.5, ease: 'easeOut' }}
         className="absolute inset-0"
@@ -338,46 +297,11 @@ function HeroSection() {
           alt="राखी Steel Furniture - Premium Steel Almirahs"
           className="w-full h-full object-cover"
         />
-        <div className="absolute inset-0 bg-gradient-to-br from-gray-900/85 via-gray-900/70 to-gray-900/85" />
+        <div className="absolute inset-0 bg-gradient-to-br from-gray-900/75 via-gray-900/55 to-gray-900/75" />
       </motion.div>
-      
-      {/* Secondary Background Slideshow (subtle) */}
-      <div className="absolute inset-0 opacity-0">
-        {productImages.slice(0, 5).map((img, index) => (
-          <motion.div
-            key={img}
-            initial={{ opacity: 0, scale: 1.1 }}
-            animate={{ 
-              opacity: currentSlide === index ? 1 : 0,
-              scale: currentSlide === index ? 1 : 1.1
-            }}
-            transition={{ duration: 1.5 }}
-            className="absolute inset-0"
-          >
-            <img
-              src={img}
-              alt={`Steel Furniture ${index + 1}`}
-              className="w-full h-full object-cover"
-            />
-            <div className="absolute inset-0 bg-gradient-to-br from-gray-900/80 via-gray-900/60 to-gray-900/80" />
-          </motion.div>
-        ))}
-      </div>
-      
-      {/* Floating Elements */}
-      <motion.div
-        animate={{ y: [0, -20, 0] }}
-        transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut' }}
-        className="absolute top-1/4 left-10 w-32 h-32 bg-amber-500/20 rounded-full blur-3xl"
-      />
-      <motion.div
-        animate={{ y: [0, 20, 0] }}
-        transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
-        className="absolute bottom-1/4 right-10 w-48 h-48 bg-orange-500/20 rounded-full blur-3xl"
-      />
-      
+
       {/* Content */}
-      <div className="relative z-10 container mx-auto px-4 text-left">
+      <div className="relative z-10 container mx-auto px-4 text-left pt-24">
         <motion.div
           initial={{ opacity: 0, y: 50 }}
           animate={{ opacity: 1, y: 0 }}
@@ -400,17 +324,16 @@ function HeroSection() {
             transition={{ delay: 0.3 }}
             className="text-2xl md:text-4xl lg:text-5xl font-bold text-white mb-4 leading-tight"
           >
-            Premium <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-400 to-orange-400">Steel Furniture</span>
-            <br />Manufacturing Excellence
+            {settings.hero_title}
           </motion.h1>
           
           <motion.p
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.4 }}
-            className="text-base md:text-lg text-gray-300 mb-6"
+            className="text-base md:text-lg text-gray-200 mb-6"
           >
-            Transform your spaces with our high-quality steel almirahs, wardrobes, and custom furniture solutions. Trusted by 5000+ satisfied customers across Madhya Pradesh.
+            {settings.hero_subtitle}
           </motion.p>
           
           <motion.div
@@ -457,7 +380,7 @@ function HeroSection() {
               <div className="text-xl md:text-2xl font-bold text-amber-400">
                 <AnimatedCounter value={stat.value} suffix={stat.suffix} />
               </div>
-              <div className="text-gray-300 text-xs md:text-sm mt-1">{stat.label}</div>
+              <div className="text-gray-200 text-xs md:text-sm mt-1">{stat.label}</div>
             </motion.div>
           ))}
         </motion.div>
@@ -476,7 +399,7 @@ function HeroSection() {
 }
 
 // About Section
-function AboutSection() {
+function AboutSection({ settings }: { settings: SiteSettings }) {
   return (
     <section id="about" className="py-20 md:py-32 bg-gradient-to-b from-gray-50 to-white relative overflow-hidden">
       {/* Background Pattern */}
@@ -541,7 +464,7 @@ function AboutSection() {
               </h2>
               
               <p className="text-gray-600 text-lg mb-6">
-                राखी Steel Furniture has been a trusted name in premium steel furniture manufacturing for over a decade. We specialize in creating durable, elegant, and functional steel almirahs, wardrobes, and custom furniture solutions for homes, offices, and institutions.
+                {settings.about_text}
               </p>
               
               <p className="text-gray-600 mb-8">
@@ -677,15 +600,19 @@ function WhyChooseUsSection() {
 }
 
 // Featured Products Section
-function FeaturedProductsSection() {
-  const products = [
-    { name: '2 Door Steel Almirah', image: productImages[0], price: '₹12,999', badge: 'Bestseller' },
-    { name: '3 Door Steel Almirah', image: productImages[2], price: '₹18,999', badge: 'Popular' },
-    { name: 'Mirror Almirah', image: productImages[4], price: '₹15,999', badge: 'New' },
-    { name: 'Premium Designer Almirah', image: productImages[6], price: '₹24,999', badge: 'Premium' },
-    { name: 'Steel Wardrobe', image: productImages[8], price: '₹22,999', badge: 'Trending' },
-    { name: 'Office Cabinet', image: productImages[10], price: '₹14,999', badge: 'Commercial' }
-  ]
+function FeaturedProductsSection({ products }: { products: SiteProduct[] }) {
+  const displayProducts = products.map((product) => ({
+    id: product.id,
+    name: product.name,
+    image: resolveProductImage(parseImageUrls(product.imageUrls)[0], product.order),
+    price: product.price || 'Contact for price',
+    badge: product.category,
+    description: product.description,
+  }))
+  
+  if (displayProducts.length === 0) {
+    return null
+  }
   
   return (
     <section id="products" className="py-20 md:py-32 bg-white relative overflow-hidden">
@@ -711,8 +638,8 @@ function FeaturedProductsSection() {
         </AnimatedSection>
         
         <StaggerContainer className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {products.map((product, index) => (
-            <StaggerItem key={product.name}>
+          {displayProducts.map((product, index) => (
+            <StaggerItem key={product.id}>
               <motion.div
                 whileHover={{ y: -10 }}
                 className="group bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-500 overflow-hidden border border-gray-100"
@@ -741,7 +668,7 @@ function FeaturedProductsSection() {
                 </div>
                 <div className="p-6">
                   <h3 className="text-xl font-bold text-gray-900 mb-2">{product.name}</h3>
-                  <p className="text-gray-500 text-sm mb-4">Premium quality steel construction with powder coating</p>
+                  <p className="text-gray-500 text-sm mb-4">{product.description}</p>
                   <div className="flex items-center justify-between">
                     <span className="text-2xl font-bold text-amber-600">{product.price}</span>
                     <span className="text-gray-400 text-sm">Starting Price</span>
@@ -1063,31 +990,11 @@ function CustomManufacturingSection() {
 }
 
 // Testimonials Section
-function TestimonialsSection() {
-  const testimonials = [
-    {
-      name: 'Rajesh Kumar',
-      role: 'Homeowner',
-      location: 'Indore',
-      message: 'Excellent quality steel almirah. The powder coating finish is amazing and the product is very durable. Highly recommended!',
-      rating: 5
-    },
-    {
-      name: 'Priya Sharma',
-      role: 'Interior Designer',
-      location: 'Bhopal',
-      message: 'I have been recommending राखी Steel Furniture to all my clients. Their custom manufacturing service is exceptional.',
-      rating: 5
-    },
-    {
-      name: 'Amit Patel',
-      role: 'School Administrator',
-      location: 'Ujjain',
-      message: 'We ordered 50+ almirahs for our school hostel. Great quality, timely delivery, and excellent after-sales service.',
-      rating: 5
-    }
-  ]
-  
+function TestimonialsSection({ testimonials }: { testimonials: SiteTestimonial[] }) {
+  if (testimonials.length === 0) {
+    return null
+  }
+
   return (
     <section className="py-20 md:py-32 bg-gray-50 relative overflow-hidden">
       <div className="container mx-auto px-4">
@@ -1109,7 +1016,7 @@ function TestimonialsSection() {
         
         <StaggerContainer className="grid md:grid-cols-3 gap-8">
           {testimonials.map((testimonial, index) => (
-            <StaggerItem key={testimonial.name}>
+            <StaggerItem key={testimonial.id}>
               <motion.div
                 whileHover={{ y: -10 }}
                 className="bg-white rounded-2xl p-8 shadow-lg h-full"
@@ -1126,7 +1033,7 @@ function TestimonialsSection() {
                   </div>
                   <div>
                     <div className="font-bold text-gray-900">{testimonial.name}</div>
-                    <div className="text-gray-500 text-sm">{testimonial.role}, {testimonial.location}</div>
+                    <div className="text-gray-500 text-sm">{testimonial.role}{testimonial.company ? `, ${testimonial.company}` : ''}</div>
                   </div>
                 </div>
               </motion.div>
@@ -1322,18 +1229,38 @@ function FAQSection() {
 }
 
 // Contact Section
-function ContactSection() {
+function ContactSection({ settings }: { settings: SiteSettings }) {
   const [formData, setFormData] = useState({
     name: '',
     email: '',
     phone: '',
     message: ''
   })
+  const [submitting, setSubmitting] = useState(false)
+  const [submitMessage, setSubmitMessage] = useState('')
   
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    // Handle form submission
-    console.log('Form submitted:', formData)
+    setSubmitting(true)
+    setSubmitMessage('')
+    try {
+      const res = await fetch('/api/inquiry', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData),
+      })
+      const data = await res.json()
+      if (data.success) {
+        setSubmitMessage('Message sent successfully! We will contact you soon.')
+        setFormData({ name: '', email: '', phone: '', message: '' })
+      } else {
+        setSubmitMessage('Failed to send message. Please try again.')
+      }
+    } catch {
+      setSubmitMessage('Failed to send message. Please try again.')
+    } finally {
+      setSubmitting(false)
+    }
   }
   
   return (
@@ -1408,10 +1335,15 @@ function ContactSection() {
                     onChange={(e) => setFormData({ ...formData, message: e.target.value })}
                   />
                 </div>
-                <Button type="submit" className="w-full bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white py-6 text-lg">
-                  Send Message
+                <Button type="submit" disabled={submitting} className="w-full bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white py-6 text-lg">
+                  {submitting ? 'Sending...' : 'Send Message'}
                   <ArrowRight className="ml-2" size={20} />
                 </Button>
+                {submitMessage && (
+                  <p className={`text-sm text-center ${submitMessage.includes('success') ? 'text-green-600' : 'text-red-600'}`}>
+                    {submitMessage}
+                  </p>
+                )}
               </form>
             </motion.div>
           </AnimatedSection>
@@ -1428,8 +1360,8 @@ function ContactSection() {
                 </div>
                 <div>
                   <h4 className="font-bold text-gray-900 mb-1">Phone</h4>
-                  <p className="text-gray-600">+91 98765 43210</p>
-                  <p className="text-gray-600">+91 98765 43211</p>
+                  <p className="text-gray-600">{settings.phone1}</p>
+                  <p className="text-gray-600">{settings.phone2}</p>
                 </div>
               </motion.div>
               
@@ -1442,8 +1374,7 @@ function ContactSection() {
                 </div>
                 <div>
                   <h4 className="font-bold text-gray-900 mb-1">Email</h4>
-                  <p className="text-gray-600">info@lnsteelfurniture.com</p>
-                  <p className="text-gray-600">sales@lnsteelfurniture.com</p>
+                  <p className="text-gray-600">{settings.email}</p>
                 </div>
               </motion.div>
               
@@ -1456,7 +1387,7 @@ function ContactSection() {
                 </div>
                 <div>
                   <h4 className="font-bold text-gray-900 mb-1">Address</h4>
-                  <p className="text-gray-600">Industrial Area, Sector 25,<br />Indore, Madhya Pradesh - 452001</p>
+                  <p className="text-gray-600">{settings.address}</p>
                 </div>
               </motion.div>
               
@@ -1783,7 +1714,7 @@ function LocationCoverageSection() {
 }
 
 // Footer
-function Footer() {
+function Footer({ settings }: { settings: SiteSettings }) {
   return (
     <footer className="bg-gray-900 text-gray-300 pt-16 pb-8">
       <div className="container mx-auto px-4">
@@ -1848,15 +1779,15 @@ function Footer() {
             <ul className="space-y-4">
               <li className="flex items-start gap-3">
                 <MapPin className="text-amber-500 mt-1 flex-shrink-0" size={18} />
-                <span>Industrial Area, Sector 25, Indore, MP - 452001</span>
+                <span>{settings.address}</span>
               </li>
               <li className="flex items-center gap-3">
                 <Phone className="text-amber-500" size={18} />
-                <span>+91 98765 43210</span>
+                <span>{settings.phone1}</span>
               </li>
               <li className="flex items-center gap-3">
                 <Mail className="text-amber-500" size={18} />
-                <span>info@lnsteelfurniture.com</span>
+                <span>{settings.email}</span>
               </li>
               <li className="flex items-center gap-3">
                 <Clock className="text-amber-500" size={18} />
@@ -1884,10 +1815,10 @@ function Footer() {
 }
 
 // WhatsApp Floating Button
-function WhatsAppButton() {
+function WhatsAppButton({ settings }: { settings: SiteSettings }) {
   return (
     <motion.a
-      href="https://wa.me/919876543210?text=Hello,%20I%20am%20interested%20in%20your%20Steel%20Almirah%20collection.%20Please%20share%20details."
+      href={`https://wa.me/${settings.whatsapp}?text=Hello,%20I%20am%20interested%20in%20your%20Steel%20Almirah%20collection.%20Please%20share%20details.`}
       target="_blank"
       rel="noopener noreferrer"
       initial={{ scale: 0, opacity: 0 }}
@@ -1909,26 +1840,29 @@ function WhatsAppButton() {
 
 // Main Page Component
 export default function Home() {
+  const { products, testimonials, settings, loading } = useSiteContent()
+  const siteSettings = { ...DEFAULT_SETTINGS, ...settings }
+
   return (
     <main className="min-h-screen bg-white">
       <Header />
-      <HeroSection />
-      <AboutSection />
+      <HeroSection settings={siteSettings} />
+      <AboutSection settings={siteSettings} />
       <WhyChooseUsSection />
-      <FeaturedProductsSection />
+      {!loading && <FeaturedProductsSection products={products} />}
       <ManufacturingProcessSection />
       <ProductComparisonSection />
       <IndustriesSection />
       <CustomManufacturingSection />
-      <TestimonialsSection />
+      {!loading && <TestimonialsSection testimonials={testimonials} />}
       <GallerySection />
       <LocationCoverageSection />
       <BulkOrderSection />
       <FAQSection />
       <DownloadCatalogSection />
-      <ContactSection />
-      <Footer />
-      <WhatsAppButton />
+      <ContactSection settings={siteSettings} />
+      <Footer settings={siteSettings} />
+      <WhatsAppButton settings={siteSettings} />
     </main>
   )
 }

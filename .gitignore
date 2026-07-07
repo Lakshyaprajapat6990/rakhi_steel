@@ -32,6 +32,9 @@ yarn-error.log*
 
 # env files (can opt-in for committing if needed)
 .env*
+db/
+upload/
+prisma/db/
 
 # vercel
 .vercel
@@ -52,3 +55,4 @@ prompt
 server.log
 # Skills directory
 /skills/
+.vercel

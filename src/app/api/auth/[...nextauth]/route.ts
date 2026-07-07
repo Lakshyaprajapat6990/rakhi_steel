@@ -44,7 +44,7 @@ const authOptions: NextAuthOptions = {
       return session
     }
   },
-  secret: "rakhi-steel-furniture-admin-secret-key-2024"
+  secret: process.env.NEXTAUTH_SECRET || "rakhi-steel-furniture-admin-secret-key-2024"
 }
 
 const handler = NextAuth(authOptions)
