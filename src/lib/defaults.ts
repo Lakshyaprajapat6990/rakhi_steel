@@ -32,11 +32,12 @@ export const DEFAULT_SETTINGS: Record<string, string> = {
   email: 'info@rakhisteelfurniture.com',
   address: 'Industrial Area, Sector 25, Indore, Madhya Pradesh - 452001',
   whatsapp: '919876543210',
-  hero_title: 'Premium Steel Furniture Manufacturing Excellence',
+  hero_title: 'राखी Steel Railing and Fabrications',
   hero_subtitle:
-    'Transform your spaces with our high-quality steel almirahs, wardrobes, and custom furniture solutions. Trusted by 5000+ satisfied customers across Madhya Pradesh.',
+    'Premium stainless steel railings, glass railings, balcony & staircase solutions. Expert fabrication with precision installation across Madhya Pradesh.',
   about_text:
-    'राखी Steel Furniture has been a trusted name in premium steel furniture manufacturing for over a decade. We specialize in creating durable, elegant, and functional steel almirahs, wardrobes, and custom furniture solutions for homes, offices, and institutions.',
+    'राखी Steel Railing and Fabrications is a trusted name in premium steel railing manufacturing and custom fabrication. We specialize in stainless steel railings, glass railings, balcony railings, staircase railings, and bespoke steel fabrication for homes, apartments, offices, and commercial projects.',
+  company_name: 'राखी Steel Furniture',
 }
 
 export const DEFAULT_PRODUCTS = [

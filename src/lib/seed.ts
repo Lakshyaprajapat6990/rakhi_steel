@@ -31,6 +31,25 @@ async function syncProductImages() {
   }
 }
 
+async function syncBrandingSettings() {
+  const settings = await db.siteSettings.findMany()
+
+  for (const setting of settings) {
+    if (!setting.value.includes('Aditya Steel')) continue
+
+    await db.siteSettings.update({
+      where: { key: setting.key },
+      data: { value: setting.value.replaceAll('Aditya Steel', 'राखी Steel') },
+    })
+  }
+
+  await db.siteSettings.upsert({
+    where: { key: 'company_name' },
+    update: { value: 'राखी Steel Furniture' },
+    create: { key: 'company_name', value: 'राखी Steel Furniture' },
+  })
+}
+
 export async function ensureSeedData() {
   const productCount = await db.product.count()
   if (productCount === 0) {
@@ -52,6 +71,8 @@ export async function ensureSeedData() {
   } else {
     await syncProductImages()
   }
+
+  await syncBrandingSettings()
 
   const testimonialCount = await db.testimonial.count()
   if (testimonialCount === 0) {
