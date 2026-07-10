@@ -18,6 +18,8 @@ export function isBrokenProductImageUrl(url: string | undefined): boolean {
   if (!url) return true
   if (url.includes('WhatsApp')) return true
   if (url.includes('/images/gallery/')) return true
+  if (url.startsWith('http://') || url.startsWith('https://')) return false
+  if (url.startsWith('/images/products/')) return false
   return !PRODUCT_IMAGES.includes(url as (typeof PRODUCT_IMAGES)[number])
 }
 

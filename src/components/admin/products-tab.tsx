@@ -1,13 +1,13 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import { Label } from '@/components/ui/label'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
-import { Pencil, Plus, Save, Trash2 } from 'lucide-react'
+import { ImagePlus, Pencil, Plus, Save, Trash2, Upload } from 'lucide-react'
 import { parseImageUrls } from '@/hooks/use-site-content'
 
 interface Product {
@@ -39,6 +39,8 @@ export function ProductsTab() {
   const [editing, setEditing] = useState<Product | null>(null)
   const [form, setForm] = useState(emptyProduct)
   const [message, setMessage] = useState('')
+  const [uploading, setUploading] = useState(false)
+  const fileInputRef = useRef<HTMLInputElement>(null)
 
   const fetchProducts = async () => {
     try {
@@ -127,6 +129,41 @@ export function ProductsTab() {
     fetchProducts()
   }
 
+  const handleImageUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0]
+    if (!file) return
+
+    setUploading(true)
+    setMessage('')
+
+    try {
+      const body = new FormData()
+      body.append('file', file)
+
+      const res = await fetch('/api/upload', {
+        method: 'POST',
+        body,
+      })
+
+      const data = await res.json()
+
+      if (!res.ok || !data.success) {
+        setMessage(data.error || 'Failed to upload image.')
+        return
+      }
+
+      setForm({ ...form, imageUrls: [data.url] })
+      setMessage('Image uploaded. Click Save Product to apply it on the website.')
+    } catch {
+      setMessage('Failed to upload image.')
+    } finally {
+      setUploading(false)
+      if (fileInputRef.current) fileInputRef.current.value = ''
+    }
+  }
+
+  const currentImage = form.imageUrls[0] || ''
+
   if (loading) {
     return <div className="text-center py-8 text-gray-400">Loading products...</div>
   }
@@ -185,13 +222,60 @@ export function ProductsTab() {
                   className="bg-gray-700 border-gray-600 text-white mt-1"
                 />
               </div>
-              <div>
-                <Label className="text-gray-300">Image URL</Label>
-                <Input
-                  value={form.imageUrls[0] || ''}
-                  onChange={(e) => setForm({ ...form, imageUrls: [e.target.value] })}
-                  className="bg-gray-700 border-gray-600 text-white mt-1"
-                />
+              <div className="md:col-span-2">
+                <Label className="text-gray-300">Product Image</Label>
+                <div className="mt-2 space-y-3">
+                  {currentImage && (
+                    <div className="flex items-center gap-4">
+                      <img
+                        src={currentImage}
+                        alt="Product preview"
+                        className="w-24 h-24 rounded-lg object-cover border border-gray-600"
+                      />
+                      <p className="text-gray-400 text-sm break-all">{currentImage}</p>
+                    </div>
+                  )}
+                  <div className="flex flex-wrap gap-2">
+                    <input
+                      ref={fileInputRef}
+                      type="file"
+                      accept="image/jpeg,image/png,image/webp,image/gif"
+                      className="hidden"
+                      onChange={handleImageUpload}
+                    />
+                    <Button
+                      type="button"
+                      variant="outline"
+                      onClick={() => fileInputRef.current?.click()}
+                      disabled={uploading}
+                      className="border-gray-600 text-gray-200 hover:text-white"
+                    >
+                      {uploading ? (
+                        <>Uploading...</>
+                      ) : (
+                        <>
+                          <Upload size={16} className="mr-2" />
+                          Browse & Upload Image
+                        </>
+                      )}
+                    </Button>
+                    {!currentImage && (
+                      <div className="flex items-center gap-2 text-gray-500 text-sm">
+                        <ImagePlus size={16} />
+                        Choose an image from your device
+                      </div>
+                    )}
+                  </div>
+                  <div>
+                    <Label className="text-gray-400 text-xs">Or paste image URL</Label>
+                    <Input
+                      value={currentImage}
+                      onChange={(e) => setForm({ ...form, imageUrls: [e.target.value] })}
+                      placeholder="/images/products/your-image.png"
+                      className="bg-gray-700 border-gray-600 text-white mt-1"
+                    />
+                  </div>
+                </div>
               </div>
             </div>
             <div className="flex gap-2">
@@ -203,7 +287,11 @@ export function ProductsTab() {
                 Cancel
               </Button>
             </div>
-            {message && <p className="text-green-400 text-sm">{message}</p>}
+            {message && (
+              <p className={`text-sm ${message.toLowerCase().includes('fail') ? 'text-red-400' : 'text-green-400'}`}>
+                {message}
+              </p>
+            )}
           </CardContent>
         </Card>
       )}
