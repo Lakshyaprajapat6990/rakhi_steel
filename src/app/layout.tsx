@@ -14,24 +14,36 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Z.ai Code Scaffold - AI-Powered Development",
-  description: "Modern Next.js scaffold optimized for AI-powered development with Z.ai. Built with TypeScript, Tailwind CSS, and shadcn/ui.",
-  keywords: ["Z.ai", "Next.js", "TypeScript", "Tailwind CSS", "shadcn/ui", "AI development", "React"],
-  authors: [{ name: "Z.ai Team" }],
+  title: "राखी Steel Furniture | Premium Steel Almirahs & Fabrication",
+  description:
+    "राखी Steel Furniture — premium steel almirahs, wardrobes, and custom steel fabrication with precision manufacturing across Madhya Pradesh.",
+  keywords: [
+    "Rakhi Steel",
+    "राखी Steel",
+    "steel furniture",
+    "steel almirah",
+    "steel fabrication",
+    "Madhya Pradesh",
+    "Indore",
+  ],
+  authors: [{ name: "राखी Steel Furniture" }],
+  metadataBase: new URL("https://www.rakhisteel.in"),
   icons: {
-    icon: "https://z-cdn.chatglm.cn/z-ai/static/logo.svg",
+    icon: "/images/logo-name.png",
   },
   openGraph: {
-    title: "Z.ai Code Scaffold",
-    description: "AI-powered development with modern React stack",
-    url: "https://chat.z.ai",
-    siteName: "Z.ai",
+    title: "राखी Steel Furniture",
+    description:
+      "Premium steel almirahs, wardrobes, and custom steel fabrication across Madhya Pradesh.",
+    url: "https://www.rakhisteel.in",
+    siteName: "राखी Steel Furniture",
     type: "website",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Z.ai Code Scaffold",
-    description: "AI-powered development with modern React stack",
+    title: "राखी Steel Furniture",
+    description:
+      "Premium steel almirahs, wardrobes, and custom steel fabrication across Madhya Pradesh.",
   },
 };
 
